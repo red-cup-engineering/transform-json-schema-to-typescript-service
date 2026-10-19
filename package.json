@@ -4,8 +4,7 @@
   "description": "Pure JSON Schema to TypeScript source transformation, with a type-level companion for schema literals.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/red-cup-engineering/computer-code-engineering-services-section.git",
-    "directory": "services/javascript-engineering-services-section/services/transform-json-schema-to-typescript-service"
+    "url": "git+https://github.com/red-cup-engineering/transform-json-schema-to-typescript-service.git"
   },
   "private": true,
   "type": "module",
