@@ -10,7 +10,7 @@
   "type": "module",
   "exports": {
     ".": "./src/transform-json-schema-to-typescript.mjs",
-    "./types": "./src/types.mts"
+    "./types": { "types": "./src/types.d.mts" }
   },
   "scripts": {
     "check": "node --check src/transform-json-schema-to-typescript.mjs",
