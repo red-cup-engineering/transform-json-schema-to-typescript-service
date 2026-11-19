@@ -1,0 +1,29 @@
+{
+  "name": "@red-cup-engineering/transform-json-schema-to-typescript-service",
+  "version": "0.1.0",
+  "description": "Pure JSON Schema to TypeScript source transformation, with a type-level companion for schema literals.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/red-cup-engineering/transform-json-schema-to-typescript-service.git"
+  },
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/transform-json-schema-to-typescript.mjs",
+    "./types": {
+      "types": "./src/types.d.mts"
+    }
+  },
+  "scripts": {
+    "check": "node --check src/transform-json-schema-to-typescript.mjs",
+    "verify": "npm run check"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/561-group/.github/blob/main/TIPS.md"
+  }
+}
