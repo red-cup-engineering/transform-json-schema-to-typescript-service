@@ -1,12 +1,11 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * Transform a JSON Schema literal into an exported TypeScript type declaration.
  * This is a source generator, not a validator. Unsupported constraints are
  * deliberately omitted rather than represented as unsound TypeScript types.
  */
 
-function isSchema(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
+
 
 function identifier(value, label) {
   if (typeof value !== "string" || !/^[A-Za-z_$][A-Za-z0-9_$]*$/u.test(value)) {
@@ -35,12 +34,12 @@ function renderTypeName(type) {
 function renderSchema(schema, root) {
   if (schema === true) return "unknown";
   if (schema === false) return "never";
-  if (!isSchema(schema)) return "unknown";
+  if (!isRecord(schema)) return "unknown";
 
   if (typeof schema.$ref === "string") {
     if (schema.$ref === "#") return "unknown";
     const definition = /^#\/\$defs\/([A-Za-z_$][A-Za-z0-9_$]*)$/u.exec(schema.$ref);
-    if (definition && isSchema(root.$defs) && Object.hasOwn(root.$defs, definition[1])) return definition[1];
+    if (definition && isRecord(root.$defs) && Object.hasOwn(root.$defs, definition[1])) return definition[1];
     return "unknown";
   }
   if (Object.hasOwn(schema, "const")) return quoted(schema.const);
@@ -51,7 +50,7 @@ function renderSchema(schema, root) {
     }
   }
   if (schema.type === "object") {
-    if (!isSchema(schema.properties)) return "Record<string, unknown>";
+    if (!isRecord(schema.properties)) return "Record<string, unknown>";
     const required = new Set(Array.isArray(schema.required) ? schema.required.filter((key) => typeof key === "string") : []);
     const properties = Object.entries(schema.properties).map(([key, value]) =>
       `readonly ${quoted(key)}${required.has(key) ? "" : "?"}: ${renderSchema(value, root)};`,
@@ -74,10 +73,10 @@ function renderSchema(schema, root) {
  * @returns {string} An `export type` declaration, plus `$defs` aliases.
  */
 export function transformJsonSchemaToTypescript(schema, options = {}) {
-  if (schema !== true && schema !== false && !isSchema(schema)) throw new TypeError("schema must be a JSON Schema object or boolean");
-  if (!isSchema(options)) throw new TypeError("options must be an object");
-  const typeName = identifier(options.typeName ?? (isSchema(schema) && typeof schema.title === "string" ? schema.title : "Schema"), "typeName");
-  const definitions = isSchema(schema) && isSchema(schema.$defs) ? Object.entries(schema.$defs) : [];
+  if (schema !== true && schema !== false && !isRecord(schema)) throw new TypeError("schema must be a JSON Schema object or boolean");
+  if (!isRecord(options)) throw new TypeError("options must be an object");
+  const typeName = identifier(options.typeName ?? (isRecord(schema) && typeof schema.title === "string" ? schema.title : "Schema"), "typeName");
+  const definitions = isRecord(schema) && isRecord(schema.$defs) ? Object.entries(schema.$defs) : [];
   const aliases = definitions.map(([name, definition]) => `export type ${identifier(name, "$defs key")} = ${renderSchema(definition, schema)};`);
   return [...aliases, `export type ${typeName} = ${renderSchema(schema, schema)};`, ""].join("\n");
 }
